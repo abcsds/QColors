@@ -11,7 +11,7 @@ void table::setFile(QFile *file)
 
 void table::createTable()
 {
-    moves = openFile();
+    moves = getLastMoves();
     moves = toBaseTen(moves);
     //cerr << "moves: " << moves << endl;
     file->open(QIODevice::Append|QIODevice::Text);
@@ -25,8 +25,7 @@ void table::createTable()
         fi.open(QIODevice::Append|QIODevice::Text);
         QTextStream out(&fi);
         out << "Time elapsed until finished: " << t.elapsed()/60000 <<  "min." << endl;
-        file->flush();
-        file->close();
+        fi.flush();
         fi.close();
 
     } else cerr << "Error openning file"<< endl;
@@ -44,7 +43,7 @@ void table::explore()
         game.set();
         n = toBaseFour(i);
 
-        cerr << "Number: " << n << endl;
+        //cerr << "Number: " << n << endl;
         move(n);
         QVector<char> c = game.getGrid();
         //cerr << "Size of grid: " << c.size() << endl;
@@ -91,7 +90,7 @@ QString table::vector2Str(QVector<char> *colors)
     return str;
 }
 
-unsigned int table::openFile()
+unsigned int table::getLastMoves()
 {
     if(file->exists()) {
         file->open(QIODevice::ReadOnly|QIODevice::Text);
@@ -133,22 +132,21 @@ unsigned int table::toBaseTen(unsigned int n)
 unsigned int table::toBaseFour(unsigned int n)
 {
     QStack<int> r;
-    QString s;
+
+    unsigned int num = 0;
     while(n) {
         r.push(n%4);
         n = n/4;
-        if(n<4) break;
+        if(n==0) break;
     }
+    int i= qPow(10,r.size()-1);
     while(!r.isEmpty()) {
-        s.append(QString::number(r.top()));
-        r.pop();
+        num += r.pop()*i;
+        //cerr << "Num: " << num << endl;
+        i/=10;
     }
 
-    s.append(n);
 
-    cerr << "to base four: --" << s.toStdString() << "--" << endl;
-    unsigned int num = (unsigned int)s.toInt();
-    cerr << "to base four: " << num << endl;
     return num;
 }
 

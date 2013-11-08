@@ -13,7 +13,7 @@ public:
     void writeToTable(QString colors, QString numbers);
     QString vector2Str(QVector<char> *colors);
     QString stack2Str(QStack<int> *numbers);
-    unsigned int openFile();
+    unsigned int getLastMoves();
     unsigned int toBaseTen(unsigned int n);
     unsigned int toBaseFour(unsigned int n);
     unsigned int increment(unsigned int moves);

@@ -14,7 +14,7 @@ Game::Game(QWidget *parent) :
 
     file.setFileName("/Users/abcsds/Desktop/table.txt");
     hash.setFile(&file);
-    //hash.createTable();
+    hash.createTable();
 }
 
 Game::~Game()
