@@ -12,9 +12,6 @@ Game::Game(QWidget *parent) :
     help.setText("QColors Game: Spin the squares CCW arround a pivot to get the starting combination.");
     about.setText("Author: Alberto Barradas, Universidad de Guanajuato 2013");
 
-    file.setFileName("/Users/abcsds/Desktop/table.txt");
-    hash.setFile(&file);
-    hash.createTable();
 }
 
 Game::~Game()
@@ -211,28 +208,216 @@ void Game::on_actionAbout_triggered()
     about.exec();
 }
 
+// TODO: Check below
+QString Game::vector2Str(QVector<char> *colors)
+{
+    QString str;
+    for(int i = 0; i<colors->size();i++) {
+        str.append(colors->at(i));
+    }
+    return str;
+}
+
+
+unsigned int Game::toBaseTen(unsigned int n)
+{
+    QString s = QString::number(n);
+    int size = s.size();
+    int num = 0;
+    for(int i = 0; i<size;i++) {
+        int power = qPow(4,i);
+        int number = s[size-i-1].digitValue();
+        num += number*power;
+    }
+    return num;
+}
+
+unsigned int Game::toBaseFour(unsigned int n)
+{
+    QStack<int> r;
+
+    unsigned int num = 0;
+    while(n) {
+        r.push(n%4);
+        n = n/4;
+        if(n==0) break;
+    }
+    int i= qPow(10,r.size()-1);
+    while(!r.isEmpty()) {
+        num += r.pop()*i;
+        //cerr << "Num: " << num << endl;
+        i/=10;
+    }
+
+
+    return num;
+}
+
+void Game::setGrid()
+{
+    grid = g.getGrid();
+}
+
+int Game::checkStage()
+{
+    int n=0;
+    setGrid();
+    if(grid[0]!='R') return 1;
+    if( grid[0]=='R') n=2;
+    if( n==2 && grid[1]=='R' && grid[1]=='B' && grid[1]=='B') n = 3;
+    if( n == 3 && ((grid[15]=='R'&&grid[11]=='R'&&grid[12]=='B') || (grid[8]=='B'&&grid[12]=='B'&&grid[15]=='R')) ) n=4;
+    if( n==2 && grid[4]=='R' && grid[5]=='R' && grid[6]=='B' && grid[7]=='B') n = 5;
+    return n;
+}
+
+void Game::solveStageOne()
+{
+    setGrid();
+    while(grid[0]!='R')
+    {
+        randomMove(1,1,1,1);
+        setGrid();
+    }
+}
+
+void Game::solveStageTwo()
+{
+    setGrid();
+    while(grid[8]!='B'&& grid[12]!='B')
+    {
+        randomMove(0,1,1,1);
+        setGrid();
+    }
+    while(grid[14]=='R') {
+        randomMove(0,1,0,1);
+        setGrid();
+    }
+    g.revert(3);
+    g.rule(4);
+    g.rule(3);
+    g.rule(2);
+    g.rule(2);
+    setGrid();
+
+}
+
+void Game::solveStageThree()
+{
+}
+
+void Game::solveStageFour()
+{
+}
+
+void Game::solveStageFive()
+{
+}
+
+void Game::randomMove(bool one, bool two, bool three, bool four)
+{
+    int i = rand()%4;
+    switch(i) {
+    case 0:
+        if(one) g.rule(1);
+        break;
+    case 1:
+        if(two) g.rule(2);
+        break;
+    case 2:
+        if(three) g.rule(3);
+        break;
+    case 3:
+        if(four) g.rule(4);
+        break;
+    }
+    setGrid();
+}
+
+QVector<int> Game::findPair(char C1, char C2)
+{
+    QVector<int> v;
+    setGrid();
+    for(int i = 0; i < 4; i++) {
+        if(grid[i]==C1 && grid[i+1]==C2) {
+            v.append(i);
+            v.append(i+1);
+
+        }
+        if(grid[i+1]==C1 && grid[i]==C2) {
+            v.append(i+1);
+            v.append(i);
+
+        }
+    }
+    for(int i = 4; i < 8; i++) {
+        if(grid[i]==C1 && grid[i+1]==C2) {
+            v.append(i);
+            v.append(i+1);
+
+        }
+        if(grid[i+1]==C1 && grid[i]==C2) {
+            v.append(i+1);
+            v.append(i);
+
+        }
+    }
+    for(int i = 8; i < 12; i++) {
+        if(grid[i]==C1 && grid[i+1]==C2) {
+            v.append(i);
+            v.append(i+1);
+
+        }
+        if(grid[i+1]==C1 && grid[i]==C2) {
+            v.append(i+1);
+            v.append(i);
+
+        }
+    }
+    for(int i = 12; i < 16; i++) {
+        if(grid[i]==C1 && grid[i+1]==C2) {
+            v.append(i);
+            v.append(i+1);
+
+        }
+        if(grid[i+1]==C1 && grid[i]==C2) {
+            v.append(i+1);
+            v.append(i);
+
+        }
+    }
+    for(int i = 0; i < 16 ; i++) {
+        if(grid[i]==C1 && grid[i+4]==C2) {
+            v.append(i);
+            v.append(i+4);
+
+        }
+        if(grid[i+4]==C1 && grid[i]==C2) {
+            v.append(i+4);
+            v.append(i);
+
+        }
+    }
+    return v;
+}
 
 void Game::solve() {
-    QVector<char> vect = g.getGrid();
-    if (!hash.isInTable(hash.vector2Str(&vect))) {
-        QMessageBox msgBox;
-         msgBox.setText("Couldn't find a solution to this game.");
-         msgBox.exec();
-    } else {
-        QStack<int> moves = hash.findInTable(vect);
-
-        cerr << "moves:";
-        for(int i = 0; i<moves.size();i++) {
-            cerr << moves[i];
-        }
-        cerr << endl;
-
-        for(int i = 0; i<moves.size();i++) {
-            cerr << "Reverting rule: " << moves[i] << endl;
-            g.revert(i);
-        }
-        // TADA! solved :)
+    stage = checkStage();
+    switch(stage) {
+    case 1:
+        solveStageOne();
+    case 2:
+        solveStageTwo();
+    case 3:
+        solveStageThree();
+    case 4:
+        solveStageFour();
+    case 5:
+        solveStageFive();
     }
 
 }
+
+
+
+
 

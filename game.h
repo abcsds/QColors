@@ -3,7 +3,6 @@
 
 #include <QMainWindow>
 #include "colors.h"
-#include "table.h"
 
 
 namespace Ui {
@@ -19,17 +18,24 @@ public:
     ~Game();
     QColor getColor(char c);
 
-    void solve();
-    QStack<int> findInTable(QVector<char> *grid);
 
-    void createTable();
-    void explore(colors *g, QStack<int> *moves, int level);
-    bool isInTable(QString s);
-    void writeToTable(QString colors, QString numbers);
     QString vector2Str(QVector<char> *colors);
-    QString stack2Str(QStack<int> *numbers);
+    //QString stack2Str(QStack<int> *numbers);
+    unsigned int toBaseTen(unsigned int n);
+    unsigned int toBaseFour(unsigned int n);
 
+    void setGrid();
 
+    int checkStage();
+    void solveStageOne();
+    void solveStageTwo();
+    void solveStageThree();
+    void solveStageFour();
+    void solveStageFive();
+    void randomMove(bool one, bool two, bool three, bool four);
+    QVector<int> findPair(char C1,char C2);
+
+    void solve();
 
 
 protected:
@@ -67,12 +73,12 @@ private slots:
 private:
     Ui::Game *ui;
     colors g;
+    QVector<char> grid;
     bool loop;
     QMessageBox help;
     QMessageBox about;
     bool solved;
-    QFile file;
-    table hash;
+    int stage;
 };
 
 #endif // GAME_H
