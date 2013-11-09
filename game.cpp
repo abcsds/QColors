@@ -283,15 +283,18 @@ void Game::solveStageOne()
 void Game::solveStageTwo()
 {
     setGrid();
-    while(grid[8]!='B'&& grid[12]!='B')
+    while(grid[8]!='B'|| grid[12]!='B')
     {
         randomMove(0,1,1,1);
         setGrid();
     }
-    while(grid[14]=='R') {
+    //cerr << "(8,12) : (" << grid[8] << "," << grid[12] << ")"<< endl;
+    g.printGrid();
+    while(grid[14]!='R') {
         randomMove(0,1,0,1);
         setGrid();
     }
+    g.printGrid();
     g.revert(3);
     g.rule(4);
     g.rule(3);
