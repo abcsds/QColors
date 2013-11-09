@@ -23,5 +23,4 @@ FORMS    += game.ui
 #QMAKE_CXXFLAGS = -std=c++11 -stdlib=libc++ -mmacosx-version-min=10.7
 #QMAKE_LFLAGS = -std=c++11 -stdlib=libc++ -mmacosx-version-min=10.7
 
-RESOURCES += \
-    res.qrc
+RESOURCES +=

@@ -11,7 +11,7 @@ Game::Game(QWidget *parent) :
     g.setLevel(10);
     help.setText("QColors Game: Spin the squares CCW arround a pivot to get the starting combination.");
     about.setText("Author: Alberto Barradas, Universidad de Guanajuato 2013");
-
+    //play();
 }
 
 Game::~Game()
@@ -208,51 +208,6 @@ void Game::on_actionAbout_triggered()
     about.exec();
 }
 
-// TODO: Check below
-QString Game::vector2Str(QVector<char> *colors)
-{
-    QString str;
-    for(int i = 0; i<colors->size();i++) {
-        str.append(colors->at(i));
-    }
-    return str;
-}
-
-
-unsigned int Game::toBaseTen(unsigned int n)
-{
-    QString s = QString::number(n);
-    int size = s.size();
-    int num = 0;
-    for(int i = 0; i<size;i++) {
-        int power = qPow(4,i);
-        int number = s[size-i-1].digitValue();
-        num += number*power;
-    }
-    return num;
-}
-
-unsigned int Game::toBaseFour(unsigned int n)
-{
-    QStack<int> r;
-
-    unsigned int num = 0;
-    while(n) {
-        r.push(n%4);
-        n = n/4;
-        if(n==0) break;
-    }
-    int i= qPow(10,r.size()-1);
-    while(!r.isEmpty()) {
-        num += r.pop()*i;
-        //cerr << "Num: " << num << endl;
-        i/=10;
-    }
-
-
-    return num;
-}
-
 void Game::setGrid()
 {
     grid = g.getGrid();
@@ -311,7 +266,7 @@ void Game::solveStageThree()
         {
             randomMove(0,0,1,1);
             setGrid();
-            if(time.elapsed()>50) solveStageTwo();
+            if(time.elapsed()>25) solveStageTwo();
         }
         g.rule(4);
         g.rule(3);
@@ -473,21 +428,23 @@ void Game::solve() {
 
 void Game::play()
 {
-    QFile f("/times.txt");
+    QFile f("/Users/abcsds/Documents/Programs/QT/QColors/times.txt");
     f.open(QIODevice::WriteOnly|QIODevice::Text);
     QTextStream out(&f);
     int n = 1000;
     g.set();
     g.setLevel(99);
-    out << "Times for solving " << n << "puzles scrablead a 99 times each:" << endl;
-    QTime t;
+    out << "Times for solving " << n << " puzles scrablead a 99 times each:" << endl;
+    QTime t, total;
+    total.start();
     for(int i = 0; i<n; i++) {
         t.start();
         g.scramble();
         solve();
-        out << "Puzzle " << n << ": " << t.elapsed() << " ms." << endl;
+        out << "Puzzle " << i << ": " << t.elapsed() << " ms." << endl;
         t.restart();
     }
+    out << "Total time: " << total.elapsed() << " ms." << endl;
 
 }
 

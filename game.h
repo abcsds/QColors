@@ -20,9 +20,6 @@ public:
 
 
     QString vector2Str(QVector<char> *colors);
-    //QString stack2Str(QStack<int> *numbers);
-    unsigned int toBaseTen(unsigned int n);
-    unsigned int toBaseFour(unsigned int n);
 
     void setGrid();
 
