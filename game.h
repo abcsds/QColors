@@ -31,11 +31,14 @@ public:
     void solveStageTwo();
     void solveStageThree();
     void solveStageFour();
-    void solveStageFive();
+    void fourA();
+    void fourB();
     void randomMove(bool one, bool two, bool three, bool four);
     QVector<int> findPair(char C1,char C2);
 
     void solve();
+
+    void play();
 
 
 protected:
@@ -79,6 +82,7 @@ private:
     QMessageBox about;
     bool solved;
     int stage;
+    QTime time;
 };
 
 #endif // GAME_H

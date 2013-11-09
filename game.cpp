@@ -264,9 +264,8 @@ int Game::checkStage()
     setGrid();
     if(grid[0]!='R') return 1;
     if( grid[0]=='R') n=2;
-    if( n==2 && grid[1]=='R' && grid[1]=='B' && grid[1]=='B') n = 3;
-    if( n == 3 && ((grid[15]=='R'&&grid[11]=='R'&&grid[12]=='B') || (grid[8]=='B'&&grid[12]=='B'&&grid[15]=='R')) ) n=4;
-    if( n==2 && grid[4]=='R' && grid[5]=='R' && grid[6]=='B' && grid[7]=='B') n = 5;
+    if( n==2 && grid[1]=='R' && grid[2]=='B' && grid[3]=='B') n = 3;
+    if( n==3 && (grid[4]=='R'&&grid[5]=='R'&&grid[6]=='B' && grid[7]=='B') ) n = 4;
     return n;
 }
 
@@ -312,6 +311,7 @@ void Game::solveStageThree()
         {
             randomMove(0,0,1,1);
             setGrid();
+            if(time.elapsed()>50) solveStageTwo();
         }
         g.rule(4);
         g.rule(3);
@@ -329,12 +329,45 @@ void Game::solveStageThree()
 
 void Game::solveStageFour()
 {
+    int n;
+    while(!g.isOver()) {
+        n = rand()%2;
+        if(n) fourA();
+        else fourB();
+    }
 }
 
-void Game::solveStageFive()
+void Game::fourA()
 {
+    g.revert(1);
+    g.rule(2);
+    g.rule(1);
+    g.revert(4);
+    g.revert(3);
+    g.rule(4);
+    g.rule(4);
+    g.revert(3);
+    g.rule(4);
+    g.rule(3);
+    g.rule(4);
+    g.rule(3);
 }
 
+void Game::fourB()
+{
+    g.rule(2);
+    g.revert(1);
+    g.revert(2);
+    g.rule(3);
+    g.rule(4);
+    g.rule(3);
+    g.rule(3);
+    g.rule(4);
+    g.revert(3);
+    g.revert(4);
+    g.rule(3);
+    g.revert(4);
+}
 void Game::randomMove(bool one, bool two, bool three, bool four)
 {
     int i = rand()%4;
@@ -423,6 +456,7 @@ QVector<int> Game::findPair(char C1, char C2)
 }
 
 void Game::solve() {
+    time.start();
     stage = checkStage();
     switch(stage) {
     case 1:
@@ -433,8 +467,26 @@ void Game::solve() {
         solveStageThree();
     case 4:
         solveStageFour();
-    case 5:
-        solveStageFive();
+    }
+
+}
+
+void Game::play()
+{
+    QFile f("/times.txt");
+    f.open(QIODevice::WriteOnly|QIODevice::Text);
+    QTextStream out(&f);
+    int n = 1000;
+    g.set();
+    g.setLevel(99);
+    out << "Times for solving " << n << "puzles scrablead a 99 times each:" << endl;
+    QTime t;
+    for(int i = 0; i<n; i++) {
+        t.start();
+        g.scramble();
+        solve();
+        out << "Puzzle " << n << ": " << t.elapsed() << " ms." << endl;
+        t.restart();
     }
 
 }
