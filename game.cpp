@@ -289,12 +289,12 @@ void Game::solveStageTwo()
         setGrid();
     }
     //cerr << "(8,12) : (" << grid[8] << "," << grid[12] << ")"<< endl;
-    g.printGrid();
+    //g.printGrid();
     while(grid[14]!='R') {
         randomMove(0,1,0,1);
         setGrid();
     }
-    g.printGrid();
+    //g.printGrid();
     g.revert(3);
     g.rule(4);
     g.rule(3);
@@ -306,6 +306,25 @@ void Game::solveStageTwo()
 
 void Game::solveStageThree()
 {
+    do {
+        setGrid();
+        while(grid[11]!='R'|| grid[15]!='R' || grid[12]!='B')
+        {
+            randomMove(0,0,1,1);
+            setGrid();
+        }
+        g.rule(4);
+        g.rule(3);
+        int count = 0;
+        while(grid[7]!='B')
+        {
+            randomMove(0,0,1,1);
+            setGrid();
+            count++;
+            if (count > 10) break;
+        }
+        //g.rule(3);
+    } while (grid[4]!='R'|| grid[5]!='R' || grid[6]!='B' || grid[7]!='B');
 }
 
 void Game::solveStageFour()
