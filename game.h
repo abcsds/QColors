@@ -36,7 +36,7 @@ public:
     void solve();
 
     void play();
-
+    void randomPlay();
 
 protected:
     void paintEvent(QPaintEvent *e);

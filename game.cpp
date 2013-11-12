@@ -12,6 +12,7 @@ Game::Game(QWidget *parent) :
     help.setText("QColors Game: Spin the squares CCW arround a pivot to get the starting combination.");
     about.setText("Author: Alberto Barradas, Universidad de Guanajuato 2013");
     //play();
+    randomPlay();
 }
 
 Game::~Game()
@@ -446,6 +447,31 @@ void Game::play()
     }
     out << "Total time: " << total.elapsed() << " ms." << endl;
 
+}
+
+void Game::randomPlay()
+{
+    QFile f("/Users/abcsds/Documents/Programs/QT/QColors/timesRandom.txt");
+    f.open(QIODevice::WriteOnly|QIODevice::Text);
+    QTextStream out(&f);
+    QTime total;
+    g.setLevel(99);
+    g.set();
+    g.scramble();
+    out << "Total time to finish with random moves: " << endl;
+    //out << "Moves to do for each solving: " << endl;
+    for(int i = 0; i<1000;i++) {
+        //int count  = 0;
+        total.start();
+        while(!g.isOver()) {
+            randomMove(1,1,1,1);
+            //count ++;
+        }
+        out << total.elapsed() << " ms" << endl;
+        //out << count << " moves" << endl;
+        total.restart();
+        g.scramble();
+    }
 }
 
 
