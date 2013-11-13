@@ -35,6 +35,9 @@ public:
 
     void solve();
 
+    void loadGame(QString s);
+    void newGame();
+
     void play();
     void randomPlay();
 

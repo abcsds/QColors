@@ -12,7 +12,7 @@ Game::Game(QWidget *parent) :
     help.setText("QColors Game: Spin the squares CCW arround a pivot to get the starting combination.");
     about.setText("Author: Alberto Barradas, Universidad de Guanajuato 2013");
     //play();
-    randomPlay();
+    //randomPlay();
 }
 
 Game::~Game()
@@ -409,7 +409,7 @@ QVector<int> Game::findPair(char C1, char C2)
         }
     }
     return v;
-}
+} // not used
 
 void Game::solve() {
     time.start();
@@ -425,6 +425,22 @@ void Game::solve() {
         solveStageFour();
     }
 
+}
+
+void Game::loadGame(QString s)
+{
+    cerr << s.toStdString() << endl;
+    if(!s.isEmpty()) {
+        g.readFromFile(s);
+        g.printGrid();
+        grid = g.getGrid();
+        g.printGrid();
+    }
+}
+
+void Game::newGame()
+{
+    g.set();
 }
 
 void Game::play()

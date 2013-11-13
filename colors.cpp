@@ -54,16 +54,17 @@ void colors::set() {
 int colors::readFromFile(QString s) {
     QString line;
     QFile file(s);
-    size_t found;
     int counter=0;
     if (file.open(QIODevice::ReadOnly|QIODevice::Text))
     {
         int found;
+        cerr << found << endl;
         QChar c;
         QTextStream in(&file);
         QString line = in.readLine(10);
         while ( !line.isNull() )
         {
+            cerr << line.toStdString() << endl;
             found = line.toStdString().find_first_of("RBYG");
             while(found < line.size())
             {
@@ -80,6 +81,8 @@ int colors::readFromFile(QString s) {
             counter = 0;
             line = in.readLine();
         }
+        //cerr << "Printing Grid: " << endl;
+        //printGrid();
         file.close();
         return 1;
     }
