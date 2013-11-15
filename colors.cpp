@@ -58,22 +58,28 @@ int colors::readFromFile(QString s) {
     if (file.open(QIODevice::ReadOnly|QIODevice::Text))
     {
         int found;
-        cerr << found << endl;
+        int count = 0;
+
         QChar c;
         QTextStream in(&file);
         QString line = in.readLine(10);
         while ( !line.isNull() )
         {
-            cerr << line.toStdString() << endl;
             found = line.toStdString().find_first_of("RBYG");
             while(found < line.size())
             {
                 c = line[found];
-                if (counter < 4) grid[counter] = c.toAscii();
+                if (counter < 4) {
+                    char ch = c.toAscii();
+                    grid.push_back(ch);
+                    grid[count] = ch;
+                    count++;
+                }
                 else {
                     cerr << "File has doesn't have the specified format: ending file reading." << endl;
                     return 0;
                 }
+
                 counter++;
                 found=line.toStdString().find_first_of("RBYG",found+1);
                 if(found==-1) break;
@@ -81,8 +87,6 @@ int colors::readFromFile(QString s) {
             counter = 0;
             line = in.readLine();
         }
-        //cerr << "Printing Grid: " << endl;
-        //printGrid();
         file.close();
         return 1;
     }

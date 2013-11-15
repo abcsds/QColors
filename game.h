@@ -73,16 +73,18 @@ private slots:
 
     void on_levelSlider_actionTriggered(int action);
 
+    void on_actionExit_triggered();
+
 private:
     Ui::Game *ui;
     colors g;
     QVector<char> grid;
-    bool loop;
+    bool loop, emergencyExit;
     QMessageBox help;
     QMessageBox about;
     bool solved;
     int stage;
-    QTime time;
+    QTime time, ETime;
 };
 
 #endif // GAME_H

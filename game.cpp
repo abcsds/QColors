@@ -8,6 +8,7 @@ Game::Game(QWidget *parent) :
     ui->setupUi(this);
     loop = true;
     solved = false;
+    emergencyExit = false;
     g.setLevel(10);
     help.setText("QColors Game: Spin the squares CCW arround a pivot to get the starting combination.");
     about.setText("Author: Alberto Barradas, Universidad de Guanajuato 2013");
@@ -232,6 +233,13 @@ void Game::solveStageOne()
     {
         randomMove(1,1,1,1);
         setGrid();
+        if(ETime.elapsed() > 5000) {
+            cerr << "Error in stage one: check your imput" << endl;
+            QMessageBox msgBox;
+             msgBox.setText("Fatal error! Wrong input.");
+             msgBox.exec();
+            emergencyExit = true;
+        }
     }
 }
 
@@ -242,14 +250,25 @@ void Game::solveStageTwo()
     {
         randomMove(0,1,1,1);
         setGrid();
+        if(ETime.elapsed() > 5000) {
+            cerr << "Error in stage two a: check your imput" << endl;
+            QMessageBox msgBox;
+             msgBox.setText("Fatal error! Wrong input.");
+             msgBox.exec();
+             emergencyExit = true;
+        }
     }
-    //cerr << "(8,12) : (" << grid[8] << "," << grid[12] << ")"<< endl;
-    //g.printGrid();
     while(grid[14]!='R') {
         randomMove(0,1,0,1);
         setGrid();
+        if(ETime.elapsed() > 5000) {
+            cerr << "Error in stage two b: check your imput" << endl;
+            QMessageBox msgBox;
+             msgBox.setText("Fatal error! Wrong input.");
+             msgBox.exec();
+             emergencyExit = true;
+        }
     }
-    //g.printGrid();
     g.revert(3);
     g.rule(4);
     g.rule(3);
@@ -279,7 +298,13 @@ void Game::solveStageThree()
             count++;
             if (count > 10) break;
         }
-        //g.rule(3);
+        if(ETime.elapsed() > 5000) {
+            cerr << "Error in stage three: check your imput" << endl;
+            QMessageBox msgBox;
+             msgBox.setText("Fatal error! Wrong input.");
+             msgBox.exec();
+             emergencyExit = true;
+        }
     } while (grid[4]!='R'|| grid[5]!='R' || grid[6]!='B' || grid[7]!='B');
 }
 
@@ -290,6 +315,13 @@ void Game::solveStageFour()
         n = rand()%2;
         if(n) fourA();
         else fourB();
+        if(ETime.elapsed() > 5000) {
+            cerr << "Error in stage four: check your imput" << endl;
+            QMessageBox msgBox;
+             msgBox.setText("Fatal error! Wrong input.");
+             msgBox.exec();
+             emergencyExit = true;
+        }
     }
 }
 
@@ -413,6 +445,7 @@ QVector<int> Game::findPair(char C1, char C2)
 
 void Game::solve() {
     time.start();
+    ETime.start();
     stage = checkStage();
     switch(stage) {
     case 1:
@@ -429,13 +462,12 @@ void Game::solve() {
 
 void Game::loadGame(QString s)
 {
-    cerr << s.toStdString() << endl;
     if(!s.isEmpty()) {
-        g.readFromFile(s);
-        g.printGrid();
-        grid = g.getGrid();
-        g.printGrid();
+        if (g.readFromFile(s)==1) {
+            grid = g.getGrid();
+        } else cerr << "Couldn't load file" << endl;
     }
+
 }
 
 void Game::newGame()
@@ -494,3 +526,8 @@ void Game::randomPlay()
 
 
 
+
+void Game::on_actionExit_triggered()
+{
+    QCoreApplication::exit();
+}
